@@ -1,0 +1,61 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Dashboard {% endblock %} 
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+
+    <style>
+      progress.done, progress.done::-webkit-progress-value {
+        background-color: #22CA84;
+      }
+
+      progress.not-done, progress.not-done::-webkit-progress-value {
+        background: #000000;
+      }
+
+      #say-something {
+        color: #000000;
+        font-size: 25px;
+        font-weight: bold;
+        margin-bottom: 10px;
+      }
+
+    </style>
+
+    <div class="row">
+      <div class="col-sm-12">
+        <progress class="done" min="0" max="1" value="1" style="width: 19.5%;"></progress>
+        <progress class="not-done" min="0" max="1" value="0" style="width: 19.5%;"></progress>
+        <progress class="not-done" min="0" max="1" value="0" style="width: 19.5%;"></progress>
+        <progress class="not-done" min="0" max="1" value="0" style="width: 19.5%;"></progress>
+        <progress class="not-done" min="0" max="1" value="0" style="width: 19.5%;"></progress>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-12 col-md-12 col-sm-12">
+        <div class="card card-stats">
+          <div class="card-header card-header-warning card-header-icon" style="height: 400px; text-align: center;">
+            <p class="card-category" id="say-something">Say Something</p>
+            <img src="../../static/assets/img/speaker.png" style="width: 20%;" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+
+  <script>
+    $(document).ready(function() {
+      // Javascript method's body can be found in assets/js/demos.js
+      md.initDashboardPageCharts();
+
+    });
+  </script>
+
+{% endblock javascripts %}
