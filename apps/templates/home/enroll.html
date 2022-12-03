@@ -3,59 +3,215 @@
 {% block title %} Dashboard {% endblock %} 
 
 <!-- Specific Page CSS goes HERE  -->
-{% block stylesheets %}{% endblock stylesheets %}
+{% block stylesheets %}
+<style>
+    progress.done, progress.done::-webkit-progress-value {
+      	background-color: #22CA84;
+    }
+
+    progress.not-done, progress.not-done::-webkit-progress-value {
+      	background-color: #000000;
+    }
+
+    #say-something {
+		color: #000000;
+		font-size: 25px;
+		font-weight: bold;
+		margin-top: 10px;
+		margin-bottom: 10px;
+    }
+
+    #finish-btn{
+		display: none;
+		margin-right: 30px;
+		margin-bottom: 30px;
+    }
+
+    button {
+		border-radius: 10px;
+		height: 40px;
+		width: 150px;
+    }
+
+    #enroll-img {
+      	cursor: pointer;
+    }
+
+	#after-username {
+		display: none;
+	}
+
+</style>
+{% endblock stylesheets %}
 
 {% block content %}
 
-    <style>
-      progress.done, progress.done::-webkit-progress-value {
-        background-color: #22CA84;
-      }
+	<div id="before-username">
+		<div class="row">
+			<div class="col-lg-12 col-md-12 col-sm-12">
+				<div class="card-header card-header-primary" style="height: 450px; text-align: center; width: 50%;">
+					<form role="form">
+						<div class="row">
+							<div class="col-md-12">
+								<div class="form-group">
+									<input id="enroll-name" type="text" class="form-control" placeholder="Name" required>
+								</div>
+								<div class="form-group">
+									<input id="enroll-username" type="text" class="form-control" placeholder="Username" required>
+								</div>
+								<div class="form-group">
+									<input id="enroll-email" type="text" class="form-control" placeholder="Email" required>
+								</div>
+								<div class="form-group">
+									<input id="enroll-password" type="password" class="form-control" placeholder="Password" required>
+								</div>
+								<div class="form-group">
+									<label >Birthdate</label>
+									<input id="enroll-dob" type="date" class="form-control" placeholder="Birthdate" required>
+								</div>
+							</div>
+						</div>
+						<br />
+						<button style="background-color: #14794F;" id="enroll-submit" type="submit" name="enroll" class="btn btn-primary pull-left">Enroll</button>
+						<br /> <br /> <br />
+						<div class="clearfix" id="enroll-noti" style="text-align: left;">
+							
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
 
-      progress.not-done, progress.not-done::-webkit-progress-value {
-        background: #000000;
-      }
-
-      #say-something {
-        color: #000000;
-        font-size: 25px;
-        font-weight: bold;
-        margin-bottom: 10px;
-      }
-
-    </style>
-
-    <div class="row">
-      <div class="col-sm-12">
-        <progress class="done" min="0" max="1" value="1" style="width: 19.5%;"></progress>
-        <progress class="not-done" min="0" max="1" value="0" style="width: 19.5%;"></progress>
-        <progress class="not-done" min="0" max="1" value="0" style="width: 19.5%;"></progress>
-        <progress class="not-done" min="0" max="1" value="0" style="width: 19.5%;"></progress>
-        <progress class="not-done" min="0" max="1" value="0" style="width: 19.5%;"></progress>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-lg-12 col-md-12 col-sm-12">
-        <div class="card card-stats">
-          <div class="card-header card-header-warning card-header-icon" style="height: 400px; text-align: center;">
-            <p class="card-category" id="say-something">Say Something</p>
-            <img src="../../static/assets/img/speaker.png" style="width: 20%;" />
-          </div>
-        </div>
-      </div>
-    </div>
+	<div id="after-username">
+		<div class="row">
+			<div class="col-sm-12">
+				<progress id="progress-1" class="not-done" min="0" max="1" value="1" style="width: 19.5%;"></progress>
+				<progress id="progress-2" class="not-done" min="0" max="1" value="1" style="width: 19.5%;"></progress>
+				<progress id="progress-3" class="not-done" min="0" max="1" value="1" style="width: 19.5%;"></progress>
+				<progress id="progress-4" class="not-done" min="0" max="1" value="1" style="width: 19.5%;"></progress>
+				<progress id="progress-5" class="not-done" min="0" max="1" value="1" style="width: 19.5%;"></progress>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-lg-12 col-md-12 col-sm-12">
+				<div class="card card-stats">
+				<div class="card-header card-header-warning card-header-icon" style="height: 300px; text-align: center;">
+					<p class="card-category" id="say-something">Say Something</p>
+					<img id="enroll-img" src="../../static/assets/img/speaker.PNG" style="width: 20%;" />
+					<a id="download">Download</a>
+				</div>
+				<div id="finish-btn" class="card-header card-header-warning card-header-icon">
+					<button><b><a href="/sign-in">Finish</a></b></button>
+				</div>
+				</div>
+			</div>
+		</div>
+	</div>
 
 {% endblock content %}
 
 <!-- Specific Page JS goes HERE  -->
 {% block javascripts %}
 
-  <script>
-    $(document).ready(function() {
-      // Javascript method's body can be found in assets/js/demos.js
-      md.initDashboardPageCharts();
+<script>
+	var name = "";
+	var username = "";
+	var email = "";
+	var password = "";
+	var dob = null;
 
+    var counter = 0;
+
+    $(document).ready(function() {
+
+		function checkUsernameValid(username) {
+			return "";
+		}
+
+		$("#enroll-submit").click(function(e) {
+			e.preventDefault();
+
+			name = $("#enroll-name").val();
+			username = $("#enroll-username").val();
+			email = $("#enroll-email").val();
+			password = $("#enroll-password").val();
+			dob = $("#enroll-dob").val();
+
+			let errMsg = checkUsernameValid(username);
+			if (errMsg !== "") {
+				$("#enroll-noti").text(errMsg);
+			} else {
+				$("#before-username").css("display", "none");
+				$("#after-username").css("display", "block");
+			}
+		});
+
+		// recording
+
+		md.initDashboardPageCharts();
+
+		const downloadLink = $("#download");
+		const enrollImg = $("#enroll-img");
+
+		function sendVoiceToAI() {
+			return Math.round(Math.random() * 2) == 1;
+		}
+
+		function handleUI() {
+			if (sendVoiceToAI()) {
+				counter++;
+				let id_selector = "#progress-" + counter;
+				$(id_selector).removeClass("not-done");
+				$(id_selector).addClass("done");
+				if (counter == 5) {
+					$("#say-something").text("You can login with your voice as " + username);
+					$("#enroll-img").attr("src", "../../static/assets/img/enroll-done.PNG");
+					$("#enroll-img").off("click");
+					$("#finish-btn").css("display", "block");
+				} else {
+					$("#say-something").text("Success");
+					$("#enroll-img").attr("src", "../../static/assets/img/enroll-success.PNG");
+					setTimeout(function() {
+						$("#say-something").text("Say something");
+						$("#enroll-img").attr("src", "../../static/assets/img/speaker.PNG");
+					}, 1000);
+				}
+			} else {
+				$("#say-something").text("Try again");
+				$("#enroll-img").attr("src", "../../static/assets/img/enroll-tryagain.PNG");
+				setTimeout(function() {
+					$("#say-something").text("Say something");
+					$("#enroll-img").attr("src", "../../static/assets/img/speaker.PNG");
+				}, 1000);
+			}
+		}
+
+		const handleSuccess = function (stream) {
+			const options = {MimeType: 'audio/webm'};
+			const recordedChunks = [];
+			const mediaRecorder = new MediaRecorder(stream, options);
+
+			mediaRecorder.addEventListener('dataavailable', function(e) {
+				if (e.data.size > 0) recordedChunks.push(e.data);
+			});
+
+			mediaRecorder.addEventListener('stop', function() {
+				downloadLink.attr("href", URL.createObjectURL(new Blob(recordedChunks)));
+				downloadLink.attr("download", "test.wav");
+			});
+
+			enrollImg.click(function() {
+				mediaRecorder.start();
+				let start_time = new Date().getTime();
+				setTimeout(function() {
+					mediaRecorder.stop();
+					handleUI();
+				}, 3000);
+			})
+		};
+		navigator.mediaDevices.getUserMedia({audio: true, video: false}).then(handleSuccess);
     });
-  </script>
+</script>
 
 {% endblock javascripts %}

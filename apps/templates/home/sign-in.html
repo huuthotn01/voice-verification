@@ -3,122 +3,182 @@
 {% block title %} Page User {% endblock %} 
 
 <!-- Specific Page CSS goes HERE  -->
-{% block stylesheets %}{% endblock stylesheets %}
+{% block stylesheets %}
+<style>
+
+    #say-something, #tryagain-note {
+		color: #000000;
+		font-size: 25px;
+		font-weight: bold;
+		margin-top: 10px;
+		margin-bottom: 10px;
+    }
+
+	#signin-img {
+		cursor: pointer;
+	}
+
+	#after-username, #password-required {
+		display: none;
+	}
+
+</style>
+{% endblock stylesheets %}
 
 {% block content %}
 
-          <div class="row">
-            <div class="col-md-8">
-              <div class="card">
-                <div class="card-header card-header-primary">
-                  <h4 class="card-title">Edit Profile</h4>
-                  <p class="card-category">Complete your profile</p>
-                </div>
-                <div class="card-body">
-                  <form>
-                    <div class="row">
-                      <div class="col-md-5">
-                        <div class="form-group">
-                          <label class="bmd-label-floating">UserID (disabled)</label>
-                          <input type="text" class="form-control" disabled value="{{ current_user.id }}">
-                        </div>
-                      </div>
-                      <div class="col-md-3">
-                        <div class="form-group">
-                          <label class="bmd-label-floating">Username</label>
-                          <input type="text" class="form-control" value="{{ current_user.username }}">
-                        </div>
-                      </div>
-                      <div class="col-md-4">
-                        <div class="form-group">
-                          <label class="bmd-label-floating">Email address</label>
-                          <input type="email" class="form-control" value="{{ current_user.email }}">
-                        </div>
-                      </div>
-                    </div>
-                    <div class="row">
-                      <div class="col-md-6">
-                        <div class="form-group">
-                          <label class="bmd-label-floating">Fist Name</label>
-                          <input type="text" class="form-control">
-                        </div>
-                      </div>
-                      <div class="col-md-6">
-                        <div class="form-group">
-                          <label class="bmd-label-floating">Last Name</label>
-                          <input type="text" class="form-control">
-                        </div>
-                      </div>
-                    </div>
-                    <div class="row">
-                      <div class="col-md-12">
-                        <div class="form-group">
-                          <label class="bmd-label-floating">Adress</label>
-                          <input type="text" class="form-control">
-                        </div>
-                      </div>
-                    </div>
-                    <div class="row">
-                      <div class="col-md-4">
-                        <div class="form-group">
-                          <label class="bmd-label-floating">City</label>
-                          <input type="text" class="form-control">
-                        </div>
-                      </div>
-                      <div class="col-md-4">
-                        <div class="form-group">
-                          <label class="bmd-label-floating">Country</label>
-                          <input type="text" class="form-control">
-                        </div>
-                      </div>
-                      <div class="col-md-4">
-                        <div class="form-group">
-                          <label class="bmd-label-floating">Postal Code</label>
-                          <input type="text" class="form-control">
-                        </div>
-                      </div>
-                    </div>
-                    <div class="row">
-                      <div class="col-md-12">
-                        <div class="form-group">
-                          <label>About Me</label>
-                          <div class="form-group">
-                            <label class="bmd-label-floating"> Lamborghini Mercy, Your chick she so thirsty, I'm in that two seat Lambo.</label>
-                            <textarea class="form-control" rows="5"></textarea>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <button type="submit" class="btn btn-primary pull-right">Update Profile</button>
-                    <div class="clearfix"></div>
-                  </form>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="card card-profile">
-                <div class="card-avatar">
-                  <a href="#pablo">
-                    <img class="img" src="/static/assets/img/faces/marc.jpg" />
-                  </a>
-                </div>
-                <div class="card-body">
-                  <h6 class="card-category text-gray">
-                    {{ current_user.username }}
-                  </h6>
-                  <h4 class="card-title">
-                    {{ current_user.email }}
-                  </h4>
-                  <p class="card-description">
-                    Don't be scared of the truth because we need to restart the human foundation in truth And I love you like Kanye loves Kanye I love Rick Owens’ bed design but the back is...
-                  </p>
-                  <a href="#pablo" class="btn btn-primary btn-round">Follow</a>
-                </div>
-              </div>
-            </div>
-          </div>
+<div id="before-username">
+	<div class="row">
+		<div class="col-lg-12 col-md-12 col-sm-12">
+			<div class="card-header card-header-primary" style="height: 250px; text-align: center; width: 50%;">
+				<form role="form">
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group">
+								<input id="signin-username" type="text" class="form-control" placeholder="Username" required>
+							</div>
+						</div>
+					</div>
+					<br />
+					<button style="background-color: #14794F;" id="signin-submit" type="submit" name="signin" class="btn btn-primary pull-left">Sign in</button>
+					<br /> <br /> <br />
+					<div class="clearfix" id="signin-noti" style="text-align: left;">
+						
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="after-username">
+    <div class="row">
+		<div class="col-lg-12 col-md-12 col-sm-12">
+			<div class="card card-stats">
+			<div class="card-header card-header-warning card-header-icon" style="height: 500px; text-align: center;">
+				<p class="card-category" id="say-something">Say Something To Be Recognised</p>
+				<img id="signin-img" src="../../static/assets/img/mic.PNG" style="width: 20%;" />
+				<a id="download">Download</a>
+				<p class="card-category" id="tryagain-note"></p>
+			</div>
+			</div>
+		</div>
+    </div>
+</div>
+
+<div id="password-required">
+	<div class="row">
+		<div class="col-lg-12 col-md-12 col-sm-12">
+			<div class="card-header card-header-primary" style="height: 250px; text-align: center; width: 50%;">
+				<form role="form">
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group">
+								<input id="pwd-username" type="text" class="form-control" placeholder="Username" required>
+							</div>
+							<div class="form-group">
+								<input id="pwd-password" type="text" class="form-control" placeholder="Password" required>
+							</div>
+						</div>
+					</div>
+					<br />
+					<button style="background-color: #14794F;" id="pwd-submit" type="submit" name="pwd" class="btn btn-primary pull-left">Sign in</button>
+					<br /> <br /> <br />
+					<div class="clearfix" id="pwd-noti" style="text-align: left;">
+						
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
 
 {% endblock content %}
 
 <!-- Specific Page JS goes HERE  -->
-{% block javascripts %}{% endblock javascripts %}
+{% block javascripts %}
+
+<script>
+	var username = "";
+
+	var counter = 0;
+
+    $(document).ready(function() {
+
+		function checkUsernameValid(username) {
+			return "";
+		}
+
+		$("#signin-submit").click(function(e) {
+			e.preventDefault();
+			username = $("#signin-username").val();
+			let errMsg = checkUsernameValid(username);
+			if (errMsg !== "") {
+				$("#signin-noti").text(errMsg);
+			} else {
+				$("#before-username").css("display", "none");
+				$("#after-username").css("display", "block");
+			}
+		});
+
+		// recording
+
+		const downloadLink = $("#download");
+		const signinImg = $("#signin-img");
+
+		function sendVoiceToAI() {
+			return false;
+			// return Math.round(Math.random() * 2) == 1;
+		}
+
+		function handleUI() {
+			if (sendVoiceToAI()) {
+				$("#say-something").text("Welcome, " + username + "!");
+				$("#signin-img").attr("src", "../../static/assets/img/signin-success.PNG");
+				$("#signin-img").off("click");
+			} else {
+				counter++;
+				if (counter == 3) {
+					$("#after-username").css("display", "none");
+					$("#password-required").css("display", "block");
+					$("#pwd-username").val(username);
+				} else {
+					$("#tryagain-note").text("Voice not recognised, try again!");
+					$("#signin-img").attr("src", "../../static/assets/img/signin-tryagain.PNG");
+					setTimeout(function() {
+						$("#tryagain-note").text("");
+						$("#signin-img").attr("src", "../../static/assets/img/mic.PNG");
+					}, 2000);
+				}
+			}
+		}
+
+		const handleSuccess = function (stream) {
+			const options = {MimeType: 'audio/webm'};
+			var recordedChunks = [];
+			const mediaRecorder = new MediaRecorder(stream, options);
+
+			mediaRecorder.addEventListener('dataavailable', function(e) {
+				if (e.data.size > 0) recordedChunks.push(e.data);
+			});
+
+			mediaRecorder.addEventListener('stop', function() {
+				downloadLink.attr("href", URL.createObjectURL(new Blob(recordedChunks)));
+				downloadLink.attr("download", "test.wav");
+			});
+
+			signinImg.click(function() {
+				recordedChunks = [];
+				mediaRecorder.start();
+				let start_time = new Date().getTime();
+				setTimeout(function() {
+					mediaRecorder.stop();
+					handleUI();
+				}, 3000);
+			})
+		};
+		navigator.mediaDevices.getUserMedia({audio: true, video: false}).then(handleSuccess);
+    });
+</script>
+
+{% endblock javascripts %}
