@@ -22,7 +22,6 @@
     }
 
     #finish-btn{
-		display: none;
 		margin-right: 30px;
 		margin-bottom: 30px;
     }
@@ -37,51 +36,51 @@
       	cursor: pointer;
     }
 
-	#after-username {
-		display: none;
-	}
-
 </style>
 {% endblock stylesheets %}
 
 {% block content %}
 
+	{% if enrollUsername %}
 	<div id="before-username">
 		<div class="row">
 			<div class="col-lg-12 col-md-12 col-sm-12">
 				<div class="card-header card-header-primary" style="height: 450px; text-align: center; width: 50%;">
-					<form role="form">
+					<form role="form" method="POST" action="enroll-check-username">
+						{% csrf_token %} 
 						<div class="row">
 							<div class="col-md-12">
 								<div class="form-group">
-									<input id="enroll-name" type="text" class="form-control" placeholder="Name" required>
+									<input id="enroll-name" type="text" name="enroll-name" class="form-control" placeholder="Name" required>
 								</div>
 								<div class="form-group">
-									<input id="enroll-username" type="text" class="form-control" placeholder="Username" required>
+									<input id="enroll-username" type="text" name="enroll-username" class="form-control" placeholder="Username" required>
 								</div>
 								<div class="form-group">
-									<input id="enroll-email" type="text" class="form-control" placeholder="Email" required>
+									<input id="enroll-email" type="text" name="enroll-email" class="form-control" placeholder="Email" required>
 								</div>
 								<div class="form-group">
-									<input id="enroll-password" type="password" class="form-control" placeholder="Password" required>
+									<input id="enroll-password" type="password" name="enroll-password" class="form-control" placeholder="Password" required>
 								</div>
 								<div class="form-group">
 									<label >Birthdate</label>
-									<input id="enroll-dob" type="date" class="form-control" placeholder="Birthdate" required>
+									<input id="enroll-dob" type="date" name="enroll-dob" class="form-control" placeholder="Birthdate" required>
 								</div>
 							</div>
 						</div>
 						<br />
-						<button style="background-color: #14794F;" id="enroll-submit" type="submit" name="enroll" class="btn btn-primary pull-left">Enroll</button>
+						<button style="background-color: #14794F;" id="enroll-submit" type="submit" name="enroll-submit" class="btn btn-primary pull-left">Enroll</button>
 						<br /> <br /> <br />
 						<div class="clearfix" id="enroll-noti" style="text-align: left;">
-							
+							{{msg | safe}}
 						</div>
 					</form>
 				</div>
 			</div>
 		</div>
 	</div>
+
+	{% elif enrollVoice %}
 
 	<div id="after-username">
 		<div class="row">
@@ -96,18 +95,34 @@
 		<div class="row">
 			<div class="col-lg-12 col-md-12 col-sm-12">
 				<div class="card card-stats">
-				<div class="card-header card-header-warning card-header-icon" style="height: 300px; text-align: center;">
-					<p class="card-category" id="say-something">Say Something</p>
-					<img id="enroll-img" src="../../static/assets/img/speaker.PNG" style="width: 20%;" />
-					<a id="download">Download</a>
-				</div>
-				<div id="finish-btn" class="card-header card-header-warning card-header-icon">
-					<button><b><a href="/sign-in">Finish</a></b></button>
-				</div>
+					<div class="card-header card-header-warning card-header-icon" style="height: 300px; text-align: center;">
+						<p class="card-category" id="say-something">Say Something</p>
+						<img id="enroll-img" src="../../static/assets/img/speaker.PNG" style="width: 20%;" />
+					</div>
 				</div>
 			</div>
 		</div>
 	</div>
+
+	{% elif enrollDone %}
+
+	<div>
+		<div class="row">
+			<div class="col-lg-12 col-md-12 col-sm-12">
+				<div class="card card-stats">
+					<div class="card-header card-header-warning card-header-icon" style="height: 300px; text-align: center;">
+						<p class="card-category" id="say-something">You can login with your voice as {{username | safe}}</p>
+						<img id="enroll-img" src="../../static/assets/img/enroll-done.PNG" style="width: 20%;" />
+					</div>
+					<div id="finish-btn" class="card-header card-header-warning card-header-icon">
+						<button><b><a href="/sign-in">Finish</a></b></button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	{% endif %}
 
 {% endblock content %}
 
@@ -115,61 +130,77 @@
 {% block javascripts %}
 
 <script>
-	var name = "";
-	var username = "";
-	var email = "";
-	var password = "";
-	var dob = null;
-
-    var counter = 0;
+    counter = 0;
 
     $(document).ready(function() {
-
-		function checkUsernameValid(username) {
-			return "";
-		}
-
-		$("#enroll-submit").click(function(e) {
-			e.preventDefault();
-
-			name = $("#enroll-name").val();
-			username = $("#enroll-username").val();
-			email = $("#enroll-email").val();
-			password = $("#enroll-password").val();
-			dob = $("#enroll-dob").val();
-
-			let errMsg = checkUsernameValid(username);
-			if (errMsg !== "") {
-				$("#enroll-noti").text(errMsg);
-			} else {
-				$("#before-username").css("display", "none");
-				$("#after-username").css("display", "block");
-			}
-		});
-
-		// recording
+		var name = "";
+		var username = "";
+		var email = "";
+		var password = "";
+		var dob;
 
 		md.initDashboardPageCharts();
 
-		const downloadLink = $("#download");
 		const enrollImg = $("#enroll-img");
 
-		function sendVoiceToAI() {
-			return Math.round(Math.random() * 2) == 1;
+		if ('{{ enrollVoice }}') {
+			name = '{{ name }}';
+			username = '{{ username }}';
+			email = '{{ email }}';
+			password = '{{ password }}';
+			dob = '{{ dob }}';
 		}
 
-		function handleUI() {
-			if (sendVoiceToAI()) {
+		function sendVoiceToAI(recordedData) {
+			url = 'enroll-check-voice?username=' + username + "&counter=" + counter;
+			fetch(url, {
+				method: 'POST',
+				headers: {
+					'Accept': 'application/json',
+					'Content-Type': 'audio/wav'
+				},
+				body: new Blob(recordedData)
+			}).then(response => response.json())
+			.then(response => {
+				handleUI(response["ok"]);
+			});
+		}
+
+		function post(path, params, method='POST') {
+			const form = document.createElement('form');
+			form.method = method;
+			form.action = path;
+
+			for (const key in params) {
+				if (params.hasOwnProperty(key)) {
+					const hiddenField = document.createElement('input');
+					hiddenField.type = 'hidden';
+					hiddenField.name = key;
+					hiddenField.value = params[key];
+
+					form.appendChild(hiddenField);
+				}
+			}
+
+			document.body.appendChild(form);
+			form.submit();
+		}
+
+		function handleUI(cond) {
+			if (cond) {
 				counter++;
-				let id_selector = "#progress-" + counter;
-				$(id_selector).removeClass("not-done");
-				$(id_selector).addClass("done");
 				if (counter == 5) {
-					$("#say-something").text("You can login with your voice as " + username);
-					$("#enroll-img").attr("src", "../../static/assets/img/enroll-done.PNG");
-					$("#enroll-img").off("click");
-					$("#finish-btn").css("display", "block");
+					post('enroll-done', {
+							'name': name,
+							'username': username,
+							'email': email,
+							'password': password,
+							'dob': dob
+						});
 				} else {
+					let id_selector = "#progress-" + counter;
+					$(id_selector).removeClass("not-done");
+					$(id_selector).addClass("done");
 					$("#say-something").text("Success");
 					$("#enroll-img").attr("src", "../../static/assets/img/enroll-success.PNG");
 					setTimeout(function() {
@@ -189,7 +220,7 @@
 
 		const handleSuccess = function (stream) {
 			const options = {MimeType: 'audio/webm'};
-			const recordedChunks = [];
+			var recordedChunks = [];
 			const mediaRecorder = new MediaRecorder(stream, options);
 
 			mediaRecorder.addEventListener('dataavailable', function(e) {
@@ -197,17 +228,16 @@
 			});
 
 			mediaRecorder.addEventListener('stop', function() {
-				downloadLink.attr("href", URL.createObjectURL(new Blob(recordedChunks)));
-				downloadLink.attr("download", "test.wav");
+				sendVoiceToAI(recordedChunks);
 			});
 
 			enrollImg.click(function() {
+				recordedChunks = [];
 				mediaRecorder.start();
 				let start_time = new Date().getTime();
 				setTimeout(function() {
 					mediaRecorder.stop();
-					handleUI();
-				}, 3000);
+				}, 1000);
 			})
 		};
 		navigator.mediaDevices.getUserMedia({audio: true, video: false}).then(handleSuccess);
