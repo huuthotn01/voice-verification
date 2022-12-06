@@ -16,6 +16,8 @@ from datetime import datetime
 
 VOICE_FAIL_PATH = "voice_file/"
 
+# Enroll
+
 def index(request):
     context = {'segment': 'enroll', 'enrollUsername': True, 'msg': ''}
 
@@ -75,17 +77,61 @@ def enrollDone(request):
     html_template = loader.get_template('home/enroll.html')
     return HttpResponse(html_template.render(context, request))
 
+
+# Sign in
+
+def signin(request):
+    context = {'segment': 'signin', 'signinUsername': True, 'msg': ''}
+
+    html_template = loader.get_template('home/sign-in.html')
+    return HttpResponse(html_template.render(context, request))
+
 @csrf_exempt
 def signinCheckUsername(request):
-    pass
+    username = request.POST['signin-username']
+
+    # check username
+    checkUsername = UserInfo.objects.filter(username=username)
+    if checkUsername.count() == 0:
+        context = {'segment': 'signin', 'signinUsername': True, 'msg': 'Username not existed'}
+    else:
+        context = {'segment': 'signin', 'signinVoice': True, 'username': username}
+
+    html_template = loader.get_template('home/sign-in.html')
+    return HttpResponse(html_template.render(context, request))
 
 @csrf_exempt
 def signinCheckVoice(request):
-    pass
+    username = request.GET.get('username')
+    reqData = request.body
+    # send voice to AI to check
+    return HttpResponse(json.dumps({"ok":True}))
 
 @csrf_exempt
 def signinCheckPassword(request):
-    pass
+    username = request.POST['username']
+    if 'pwd-password' not in request.POST:
+        context = {'segment': 'signin', 'signinPassword': True, 'msg': '', 'username': username}
+    else:
+        password = request.POST['pwd-password']
+        checkAccount = UserInfo.objects.filter(username=username, password=password)
+        if checkAccount.count() == 0:
+            context = {'segment': 'signin', 'signinPassword': True, 'msg': 'Wrong password', 'username': username}
+        else:
+            context = {'segment': 'signin', 'signinDone': True, 'msg': '', 'username': username}
+
+    html_template = loader.get_template('home/sign-in.html')
+    return HttpResponse(html_template.render(context, request))
+
+@csrf_exempt
+def signinDone(request):
+    username = request.POST['username']
+    context = {'segment': 'signin', 'signinDone': True, 'username': username, 'is_authenticated': True}
+    html_template = loader.get_template('home/sign-in.html')
+    return HttpResponse(html_template.render(context, request))
+
+
+# Other routes
 
 def pages(request):
     context = {}

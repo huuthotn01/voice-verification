@@ -17,9 +17,11 @@ urlpatterns = [
     path('enroll-done', views.enrollDone, name="enrollDone"),
 
     # Sign in
+    path('signin', views.signin, name="signin"),
     path('signin-check-username', views.signinCheckUsername, name="signinCheckUsername"),
     path('signin-check-voice', views.signinCheckVoice, name="signinCheckVoice"),
     path('signin-check-password', views.signinCheckPassword, name="signinCheckPassword"),
+    path('signin-done', views.signinDone, name='signinDone'),
 
     # Matches any html file
     re_path(r'^.*\.*', views.pages, name='pages'),
