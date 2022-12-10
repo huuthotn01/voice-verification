@@ -23,6 +23,9 @@ urlpatterns = [
     path('signin-check-password', views.signinCheckPassword, name="signinCheckPassword"),
     path('signin-done', views.signinDone, name='signinDone'),
 
+    # Logout
+    path('logout', views.logout, name="logout"),
+
     # Matches any html file
     re_path(r'^.*\.*', views.pages, name='pages'),
 

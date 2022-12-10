@@ -21,7 +21,9 @@ VOICE_FAIL_PATH = "voice_file/"
 # Enroll
 
 def index(request):
-    context = {'segment': 'enroll', 'enrollUsername': True, 'msg': ''}
+    if 'user' in request.session.keys():
+        context = {'segment': 'enroll', 'enrollVoice': True, 'is_authenticated': True, 'username': request.session['user']}
+    else: context = {'segment': 'enroll', 'enrollUsername': True, 'msg': ''}
 
     html_template = loader.get_template('home/enroll.html')
     return HttpResponse(html_template.render(context, request))
@@ -98,27 +100,39 @@ def enrollDone(request):
 # Sign in
 
 def signin(request):
-    context = {'segment': 'signin', 'signinUsername': True, 'msg': ''}
+    if 'user' in request.session.keys():
+        context = {'segment': 'signin', 'signinDone': True, 'msg': '', 'is_authenticated': True, 'username': request.session['user']}
+    else:
+        context = {'segment': 'signin', 'signinUsername': True, 'msg': ''}
 
     html_template = loader.get_template('home/sign-in.html')
     return HttpResponse(html_template.render(context, request))
 
 @csrf_exempt
 def signinCheckUsername(request):
+    if 'user' in request.session.keys():
+        context = {'segment': 'signin', 'signinDone': True, 'msg': '', 'is_authenticated': True, 'username': request.session['user']}
+
     username = request.POST['signin-username']
+    option = request.POST['signin-submit']
 
     # check username
     checkUsername = UserInfo.objects.filter(username=username)
     if checkUsername.count() == 0:
         context = {'segment': 'signin', 'signinUsername': True, 'msg': 'Username not existed'}
-    else:
+    elif option == "voice":
         context = {'segment': 'signin', 'signinVoice': True, 'username': username}
+    else: 
+        context = {'segment': 'signin', 'signinPassword': True, 'username': username}
 
     html_template = loader.get_template('home/sign-in.html')
     return HttpResponse(html_template.render(context, request))
 
 @csrf_exempt
 def signinCheckVoice(request):
+    if 'user' in request.session.keys():
+        context = {'segment': 'signin', 'signinDone': True, 'msg': '', 'is_authenticated': True, 'username': request.session['user']}
+
     username = request.GET.get('username')
     reqData = request.body
 
@@ -157,6 +171,9 @@ def signinCheckVoice(request):
 
 @csrf_exempt
 def signinCheckPassword(request):
+    if 'user' in request.session.keys():
+        context = {'segment': 'signin', 'signinDone': True, 'msg': '', 'is_authenticated': True, 'username': request.session['user']}
+
     username = request.POST['username']
     if 'pwd-password' not in request.POST:
         context = {'segment': 'signin', 'signinPassword': True, 'msg': '', 'username': username}
@@ -166,7 +183,8 @@ def signinCheckPassword(request):
         if checkAccount.count() == 0:
             context = {'segment': 'signin', 'signinPassword': True, 'msg': 'Wrong password', 'username': username}
         else:
-            context = {'segment': 'signin', 'signinDone': True, 'msg': '', 'username': username}
+            context = {'segment': 'signin', 'signinDone': True, 'msg': '', 'username': username, 'is_authenticated': True}
+            request.session['user'] = username
 
     html_template = loader.get_template('home/sign-in.html')
     return HttpResponse(html_template.render(context, request))
@@ -175,9 +193,16 @@ def signinCheckPassword(request):
 def signinDone(request):
     username = request.POST['username']
     context = {'segment': 'signin', 'signinDone': True, 'username': username, 'is_authenticated': True}
+    request.session['user'] = username
     html_template = loader.get_template('home/sign-in.html')
     return HttpResponse(html_template.render(context, request))
 
+
+# Log out
+def logout(request):
+    request.session.pop('user', None)
+    from django.shortcuts import redirect
+    return redirect('signin')
 
 # Other routes
 

@@ -12,7 +12,11 @@
           <li class="nav-item {% if 'enroll' in segment %} active {% endif %}">
             <a class="nav-link" href="/">
               <i class="material-icons">dashboard</i>
-              <p>Enroll</p>
+              {% if is_authenticated %}
+                <p>Re-roll</p>
+              {% else %}
+                <p>Enroll</p>
+              {% endif %}
             </a>
           </li>
           <li class="nav-item {% if 'signin' in segment %} active {% endif %}">

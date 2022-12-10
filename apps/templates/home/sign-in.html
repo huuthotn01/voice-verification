@@ -38,7 +38,12 @@
 						</div>
 					</div>
 					<br />
-					<button style="background-color: #14794F;" id="signin-submit" type="submit" name="signin" class="btn btn-primary pull-left">Sign in</button>
+					<button style="background-color: #14794F; width: 100%;" id="signin-submit" type="submit" name="signin-submit" class="btn btn-primary pull-left" value="voice">
+						Sign in by voice
+					</button>
+					<button style="background-color: #14794F; width: 100%;" id="signin-submit" type="submit" name="signin-submit" class="btn btn-primary pull-left" value="password">
+						Sign in by password
+					</button>
 					<br /> <br /> <br />
 					<div class="clearfix" id="signin-noti" style="text-align: left;">
 						{{msg | safe}}
@@ -76,7 +81,7 @@
 						<div class="col-md-12">
 							<input name="username" type="hidden" value="{{ username }}" />
 							<div class="form-group">
-								<input id="pwd-password" name="pwd-password" type="text" class="form-control" placeholder="Password" required>
+								<input id="pwd-password" name="pwd-password" type="password" class="form-control" placeholder="Password" required>
 							</div>
 						</div>
 					</div>
