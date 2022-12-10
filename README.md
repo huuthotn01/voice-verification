@@ -9,4 +9,10 @@ To run this application:
 
 3. Export global variables: `export dev.env`
 
-4. Run the web app: `python manage.py runserver`
+4. Create database:
+```
+python manage.py makemigrations
+python manage.py migrate
+```
+
+5. Run the web app: `python manage.py runserver`
