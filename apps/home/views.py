@@ -3,6 +3,7 @@
 Copyright (c) 2019 - present AppSeed.us
 """
 
+import io
 from django import template
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
@@ -13,6 +14,7 @@ from urllib.parse import urlparse, parse_qs
 import json
 import os
 from datetime import datetime
+from apps.speaker_verification import verify, sv_utils
 
 VOICE_FAIL_PATH = "voice_file/"
 
@@ -48,14 +50,29 @@ def enrollCheckVoice(request):
     counter = request.GET.get('counter')
     counter = int(counter)
     reqData = request.body
+
     counter += 1
     if not os.path.exists(VOICE_FAIL_PATH + username): os.mkdir(VOICE_FAIL_PATH + username)
-    filename = VOICE_FAIL_PATH + username + "/" + username + "_" + str(counter) +  ".wav"
-    with open(filename, 'ab') as f:
-        f.write(reqData)
+    filename = os.path.join(VOICE_FAIL_PATH, username, username + '_' + str(counter) + ".wav")
+    # with open(filename, 'ab') as f:
+    #     f.write(reqData)
+    try:
+        audio, sr = sv_utils.maybe_get_speech(reqData)
+        sv_utils.export_wav(audio, filename)
+        message = "Success"
+        ok = True
+    except Exception as e:
+        if isinstance(e, sv_utils.VoiceTooShort):
+            message = "Voice too short, please try again with minimum duration of voice is 0.5s"
+        elif isinstance(e, TypeError):
+            message = "Please try again"
+        else:
+            raise e
+        ok = False
 
-    # check whether voice valid
-    return HttpResponse(json.dumps({"ok":True}))
+    print(message)
+
+    return HttpResponse(json.dumps({"ok":ok, "message": message}))
 
 @csrf_exempt
 def enrollDone(request):
@@ -104,8 +121,39 @@ def signinCheckUsername(request):
 def signinCheckVoice(request):
     username = request.GET.get('username')
     reqData = request.body
+
     # send voice to AI to check
-    return HttpResponse(json.dumps({"ok":True}))
+    enroll_dir = os.path.join(VOICE_FAIL_PATH, username)
+    enroll_utts = [] 
+    for root, dirs, files in os.walk(enroll_dir):
+        for filename in files:
+            if filename.endswith('.wav'):
+                filepath = os.path.join(root, filename)
+                with open(filepath, 'rb') as f:
+                    enroll_utts.append(f.read())
+    try:
+        audio, sr = sv_utils.maybe_get_speech(reqData)
+        audio = sv_utils.export_wav(audio)
+        ret = verify.verify(enroll_utts, audio)
+        if ret.get('accept', False): 
+            ok = True 
+            message = "Success"
+        else:
+            ok = False 
+            message = "Invalid speaker"
+
+    except sv_utils.VoiceTooShort as e:
+        if isinstance(e, sv_utils.VoiceTooShort):
+            message = "Voice too short, please try again with minimum duration of voice is 0.5s"
+        elif instance(e, TypeError):
+            message = "Please try again"
+        else: 
+            raise e
+        ok = False
+    
+    print(message)
+
+    return HttpResponse(json.dumps({"ok": ok, "message": message}))
 
 @csrf_exempt
 def signinCheckPassword(request):

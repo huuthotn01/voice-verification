@@ -153,13 +153,21 @@
 
 		function sendVoiceToAI(recordedData) {
 			url = 'enroll-check-voice?username=' + username + "&counter=" + counter;
+			let blob = new Blob(recordedData, {type: 'audio/wav'});
+			var form = new FormData();
+			
+			// let reader = new FileReader();
+			// reader.readAsDataURL(blob);
+			// reader.onloadend = () => {
+			// 	data = reader.result;
+			// }
 			fetch(url, {
 				method: 'POST',
 				headers: {
 					'Accept': 'application/json',
 					'Content-Type': 'audio/wav'
 				},
-				body: new Blob(recordedData)
+				body: blob
 			}).then(response => response.json())
 			.then(response => {
 				handleUI(response["ok"]);
@@ -206,7 +214,7 @@
 					setTimeout(function() {
 						$("#say-something").text("Say something");
 						$("#enroll-img").attr("src", "../../static/assets/img/speaker.PNG");
-					}, 1000);
+					}, 3000);
 				}
 			} else {
 				$("#say-something").text("Try again");
@@ -214,7 +222,7 @@
 				setTimeout(function() {
 					$("#say-something").text("Say something");
 					$("#enroll-img").attr("src", "../../static/assets/img/speaker.PNG");
-				}, 1000);
+				}, 3000);
 			}
 		}
 
@@ -228,6 +236,7 @@
 			});
 
 			mediaRecorder.addEventListener('stop', function() {
+				console.log(recordedChunks)
 				sendVoiceToAI(recordedChunks);
 			});
 
@@ -237,7 +246,7 @@
 				let start_time = new Date().getTime();
 				setTimeout(function() {
 					mediaRecorder.stop();
-				}, 1000);
+				}, 3000);
 			})
 		};
 		navigator.mediaDevices.getUserMedia({audio: true, video: false}).then(handleSuccess);
