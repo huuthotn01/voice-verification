@@ -78,21 +78,22 @@ def enrollCheckVoice(request):
 
 @csrf_exempt
 def enrollDone(request):
-    # save to db
-    name = request.POST['name']
-    username = request.POST['username']
-    email = request.POST['email']
-    password = request.POST['password']
-    dob = request.POST['dob']
-    dob = datetime.strptime(dob, '%Y-%m-%d')
-    userInfo = UserInfo(username=username, name=name, email=email, password=password, dob=dob)
-    userInfo.save()
-    for i in range(5):
-        filePath = username + "/" + username + "_" + str(i + 1)
-        userVoice = UserVoice(username=username, enroll_voice=filePath)
-        userVoice.save()
-
-    context = {'segment': 'enroll', 'enrollDone': True, 'username': username}
+    if 'user' not in request.session.keys():
+        # save to db
+        name = request.POST['name']
+        username = request.POST['username']
+        email = request.POST['email']
+        password = request.POST['password']
+        dob = request.POST['dob']
+        dob = datetime.strptime(dob, '%Y-%m-%d')
+        userInfo = UserInfo(username=username, name=name, email=email, password=password, dob=dob)
+        userInfo.save()
+        for i in range(5):
+            filePath = username + "/" + username + "_" + str(i + 1)
+            userVoice = UserVoice(username=username, enroll_voice=filePath)
+            userVoice.save()
+        context = {'segment': 'enroll', 'enrollDone': True, 'username': username}
+    else: context = {'segment': 'enroll', 'enrollDone': True, 'username': request.session['user'], 'is_authenticated': True}
     html_template = loader.get_template('home/enroll.html')
     return HttpResponse(html_template.render(context, request))
 
